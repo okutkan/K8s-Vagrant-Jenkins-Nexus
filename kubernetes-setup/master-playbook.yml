@@ -109,7 +109,20 @@
 
   - name: Copy join command to local file
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+  
+  - name: Retrieve helm binary archive.
+    unarchive:
+       src: https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz
+       dest: /tmp
+       creates: /usr/local/bin/helm
+       remote_src: yes
 
+  - name: Move helm binary into place.
+    command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
+    args:
+     creates: /usr/local/bin/helm 
+
+    
   - name: Add helm repo for jenkins
     kubernetes.core.helm_repository:
         name: jenkins
