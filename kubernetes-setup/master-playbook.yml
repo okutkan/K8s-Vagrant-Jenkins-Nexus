@@ -135,20 +135,36 @@
     kubernetes.core.helm_repository:
         name: sonatype
         repo_url: "https://sonatype.github.io/helm3-charts/"
+  - name: Ensure the jenkins Namespace exists.
+    become: yes
+    become_user: vagrant
+    kubernetes.core.k8s:
+      api_version: v1
+      kind: Namespace
+      name: jenkins
+      state: present
+  - name: Ensure the nexus Namespace exists.
+    become: yes
+    become_user: vagrant
+    kubernetes.core.k8s:
+      api_version: v1
+      kind: Namespace
+      name: nexus
+      state: present
 
   - name: Install jenkins Chart
     become: yes
     become_user: vagrant
     kubernetes.core.helm:
        name: jenkins-server
-       namespace: testing
+       namespace: jenkins
        chart_ref: jenkins/jenkins       
   - name: Install Nexus Chart
     become: yes
     become_user: vagrant  
     kubernetes.core.helm:
        name: nexus-server
-       namespace: testing
+       namespace: nexus
        chart_ref: sonatype/nexus-repository-manager 
 
   handlers:
