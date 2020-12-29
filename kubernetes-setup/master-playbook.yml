@@ -109,7 +109,26 @@
 
   - name: Copy join command to local file
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
-    
+
+  - name: Add helm repo for jenkins
+    kubernetes.core.helm_repository:
+        name: jenkins
+        repo_url: "https://charts.jenkins.io"
+  - name: Add helm repo for sonatype nexus
+    kubernetes.core.helm_repository:
+        name: sonatype
+        repo_url: "https://sonatype.github.io/helm3-charts/"
+  - name: Install jenkins Chart
+    kubernetes.core.helm:
+       name: jenkins-server
+       namespace: testing
+       chart_ref: Jenkins/jenkins       
+  - name: Install Nexus Chart
+    kubernetes.core.helm:
+       name: nexus-server
+       namespace: testing
+       chart_ref: sonatype/nexus-repository-manager 
+
   handlers:
    - name: docker status
      service: name=docker state=started
