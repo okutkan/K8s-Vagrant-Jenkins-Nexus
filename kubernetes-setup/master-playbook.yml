@@ -136,6 +136,12 @@
         name: sonatype
         repo_url: "https://sonatype.github.io/helm3-charts/"
 
+  - name: Install pwgen
+    apt:
+      name: "pip3"
+      state: present
+      update_cache: yes
+
   - name: Ensure K8s module dependencies are installed.
     pip:
       name: openshift
