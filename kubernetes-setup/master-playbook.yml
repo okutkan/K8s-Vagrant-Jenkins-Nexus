@@ -124,10 +124,14 @@
 
     
   - name: Add helm repo for jenkins
+    become: yes
+    become_user: vagrant
     kubernetes.core.helm_repository:
         name: jenkins
         repo_url: "https://charts.jenkins.io"
   - name: Add helm repo for sonatype nexus
+    become: yes
+    become_user: vagrant 
     kubernetes.core.helm_repository:
         name: sonatype
         repo_url: "https://sonatype.github.io/helm3-charts/"
