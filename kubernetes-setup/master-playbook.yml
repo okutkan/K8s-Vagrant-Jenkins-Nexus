@@ -136,9 +136,9 @@
         name: sonatype
         repo_url: "https://sonatype.github.io/helm3-charts/"
 
-  - name: Install pwgen
+  - name: Install pip3
     apt:
-      name: "pip3"
+      name: "pip"
       state: present
       update_cache: yes
 
