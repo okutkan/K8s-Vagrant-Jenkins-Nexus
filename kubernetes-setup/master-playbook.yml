@@ -138,7 +138,7 @@
 
   - name: Install pip3
     apt:
-      name: "pip"
+      name: "py-pip"
       state: present
       update_cache: yes
 
