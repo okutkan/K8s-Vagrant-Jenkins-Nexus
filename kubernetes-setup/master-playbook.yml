@@ -178,7 +178,7 @@
     kubernetes.core.helm:
        name: nexus-server
        namespace: nexus
-       chart_ref: sonatype-nexus
+       chart_ref: sonatype/sonatype-nexus
 
   handlers:
    - name: docker status
