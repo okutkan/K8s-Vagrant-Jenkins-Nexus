@@ -132,11 +132,15 @@
         name: sonatype
         repo_url: "https://sonatype.github.io/helm3-charts/"
   - name: Install jenkins Chart
+    become: yes
+    become_user: vagrant
     kubernetes.core.helm:
        name: jenkins-server
        namespace: testing
        chart_ref: Jenkins/jenkins       
   - name: Install Nexus Chart
+    become: yes
+    become_user: vagrant  
     kubernetes.core.helm:
        name: nexus-server
        namespace: testing

@@ -7,5 +7,5 @@ brew cask install vagrant
 brew cask install ansible
 vagrrant --version
 ansible --version
-
+ansible-galaxy collection install kubernetes.core
 brew install kubernetes-helm

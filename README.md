@@ -16,8 +16,11 @@ This one adds Nexus and jenkins deployment to kubernetes using helm charts.
 - run `Install-Linux.sh` or `Install-Mac.sh` depending on your operating system
 - After installations steps run `up.sh` on your terminal
 
+
+
 ## Recommended Reading
 
 - <https://www.ansible.com/blog/automating-helm-using-ansible>
+- <https://galaxy.ansible.com/kubernetes/core>
 - <https://artifacthub.io/packages/helm/sonatype/nexus-repository-manager>
 - <https://artifacthub.io/packages/helm/jenkinsci/jenkins>
