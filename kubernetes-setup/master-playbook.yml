@@ -135,6 +135,12 @@
     kubernetes.core.helm_repository:
         name: sonatype
         repo_url: "https://sonatype.github.io/helm3-charts/"
+
+  - name: Ensure K8s module dependencies are installed.
+    pip:
+      name: openshift
+      state: present
+
   - name: Ensure the jenkins Namespace exists.
     become: yes
     become_user: vagrant
