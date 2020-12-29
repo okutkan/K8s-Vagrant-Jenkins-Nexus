@@ -155,6 +155,14 @@
       kind: Namespace
       name: jenkins
       state: present
+  - name: Install jenkins Chart
+    become: yes
+    become_user: vagrant
+    kubernetes.core.helm:
+       name: jenkins-server
+       namespace: jenkins
+       chart_ref: jenkins/jenkins     
+
   - name: Ensure the nexus Namespace exists.
     become: yes
     become_user: vagrant
@@ -164,20 +172,13 @@
       name: nexus
       state: present
 
-  - name: Install jenkins Chart
-    become: yes
-    become_user: vagrant
-    kubernetes.core.helm:
-       name: jenkins-server
-       namespace: jenkins
-       chart_ref: jenkins/jenkins       
   - name: Install Nexus Chart
     become: yes
     become_user: vagrant  
     kubernetes.core.helm:
        name: nexus-server
        namespace: nexus
-       chart_ref: sonatype/nexus-repository-manager 
+       chart_ref: sonatype-nexus
 
   handlers:
    - name: docker status
