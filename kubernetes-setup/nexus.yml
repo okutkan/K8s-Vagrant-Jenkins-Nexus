@@ -1,0 +1,24 @@
+
+  - name: Add helm repo for sonatype nexus
+    become: yes
+    become_user: vagrant 
+    kubernetes.core.helm_repository:
+        name: sonatype
+        repo_url: "https://sonatype.github.io/helm3-charts/"
+        
+  - name: Ensure the nexus Namespace exists.
+    become: yes
+    become_user: vagrant
+    kubernetes.core.k8s:
+      api_version: v1
+      kind: Namespace
+      name: nexus
+      state: present
+
+  - name: Install Nexus Chart
+    become: yes
+    become_user: vagrant  
+    kubernetes.core.helm:
+       name: nexus-server
+       namespace: nexus
+       chart_ref: sonatype/sonatype-nexus

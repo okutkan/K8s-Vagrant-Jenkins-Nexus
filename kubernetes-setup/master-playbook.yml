@@ -122,20 +122,6 @@
     args:
      creates: /usr/local/bin/helm 
 
-    
-  - name: Add helm repo for jenkins
-    become: yes
-    become_user: vagrant
-    kubernetes.core.helm_repository:
-        name: jenkins
-        repo_url: "https://charts.jenkins.io"
-  - name: Add helm repo for sonatype nexus
-    become: yes
-    become_user: vagrant 
-    kubernetes.core.helm_repository:
-        name: sonatype
-        repo_url: "https://sonatype.github.io/helm3-charts/"
-
   - name: Install pip3
     apt:
       name: "python3-pip"
@@ -147,14 +133,17 @@
       name: openshift
       state: present
 
-  - name: Install Nexus
-    script: nexus.sh
-    become: false  
-  
-  - name: Install Jenkins
-    script: jenkins.sh
-    become: false 
+  vars:
+     jenkins_hostname: 35.238.224.64    
+     docker_users:
+       - jenkins 
 
+  roles:    
+  - role: geerlingguy.jenkins
+  - role: geerlingguy.docker
   handlers:
    - name: docker status
      service: name=docker state=started
+
+
+
