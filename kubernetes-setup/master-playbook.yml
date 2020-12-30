@@ -175,7 +175,7 @@
 
   - name: Install Jenkins
     script: jenkins.sh
-    become: false           
+    become: true           
   handlers:
    - name: docker status
      service: name=docker state=started
