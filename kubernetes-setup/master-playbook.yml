@@ -205,7 +205,7 @@
   #       - ./jenkins-values.yaml
   - name: Install jenkins
     become: false
-    command: helm install jenkins -n jenkins -f jenkins-values.yaml jenkins/jenkins        
+    command: helm install jenkins -n jenkins -f ./jenkins-values.yaml jenkins/jenkins        
   - name: Ensure the Jenkins Service exists in the jenkins Namespace.
     become: yes
     become_user: vagrant  
