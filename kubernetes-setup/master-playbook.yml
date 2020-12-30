@@ -202,7 +202,7 @@
        namespace: jenkins
        chart_ref: jenkins/jenkins    
        values_files:
-        - kubernetes-setup/jenkins-values.yaml
+        - ./kubernetes-setup/jenkins-values.yaml
   - name: Ensure the Jenkins Service exists in the jenkins Namespace.
     become: yes
     become_user: vagrant  
