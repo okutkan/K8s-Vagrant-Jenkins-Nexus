@@ -174,7 +174,7 @@
     become: false  
 
   - name: Install Jenkins
-    script: jenkins/jenkins.sh
+    script: jenkins.sh
     become: false           
   handlers:
    - name: docker status
