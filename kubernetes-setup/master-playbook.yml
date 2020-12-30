@@ -154,7 +154,7 @@
        name: jenkins-server
        namespace: jenkins
        chart_ref: jenkins/jenkins    
-       value_files:
+       values_files:
         -jenkins-values.yaml 
   - name: Ensure the Jenkins Service exists in the jenkins Namespace.
     become: yes
