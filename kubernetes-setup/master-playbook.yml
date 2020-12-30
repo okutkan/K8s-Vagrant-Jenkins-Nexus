@@ -142,6 +142,8 @@
       state: present  
 
   - name: Ensure the Jenkins Service exists in the jenkins Namespace.
+    become: yes
+    become_user: vagrant  
     kubernetes.core.k8s:
        state: present
        definition:
@@ -167,6 +169,8 @@
       name: nexus
       state: present             
   - name: Ensure the nexus Service exists in the nexus Namespace.
+    become: yes
+    become_user: vagrant  
     kubernetes.core.k8s:
        state: present
        definition:
