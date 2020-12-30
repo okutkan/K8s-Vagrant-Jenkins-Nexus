@@ -132,6 +132,13 @@
     pip:
       name: openshift
       state: present
+  - name: Add helm repo for jenkins
+    become: yes
+    become_user: vagrant
+    kubernetes.core.helm_repository:
+        name: jenkins
+        repo_url: "https://charts.jenkins.io"
+  
   - name: Ensure the jenkins Namespace exists.
     become: yes
     become_user: vagrant
@@ -139,19 +146,17 @@
       api_version: v1
       kind: Namespace
       name: jenkins
-      state: present  
-
-
-
-  - name: Ensure the nexus Namespace exists.
+      state: present
+  - name: Install jenkins Chart
     become: yes
     become_user: vagrant
-    kubernetes.core.k8s:
-      api_version: v1
-      kind: Namespace
-      name: nexus
-      state: present             
-  - name: Ensure the nexus Service exists in the nexus Namespace.
+    kubernetes.core.helm:
+       name: jenkins-server
+       namespace: jenkins
+       chart_ref: jenkins/jenkins    
+       value_files:
+        -jenkins-values.yaml 
+  - name: Ensure the Jenkins Service exists in the jenkins Namespace.
     become: yes
     become_user: vagrant  
     kubernetes.core.k8s:
@@ -160,22 +165,18 @@
          apiVersion: v1
          kind: Service
          metadata:
-          name: nexus
-          namespace: nexus
+          name: jenkins
+          namespace: jenkins
          spec:
-           type: NodePort
+           type: LoadBalancer
            ports:
-           - port: 8081
-             targetPort: 8081
+           - port: 8080
+             targetPort: 8080
            selector:
-             app: nexus
-  - name: Install Nexus
-    script: nexus.sh
-    become: false  
+             app: jenkins
 
-  - name: Install Jenkins
-    script: jenkins.sh
-    become: true           
+
+
   handlers:
    - name: docker status
      service: name=docker state=started

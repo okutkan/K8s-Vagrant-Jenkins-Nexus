@@ -15,6 +15,25 @@
       name: nexus
       state: present
 
+  - name: Ensure the nexus Service exists in the nexus Namespace.
+    become: yes
+    become_user: vagrant  
+    kubernetes.core.k8s:
+       state: present
+       definition:
+         apiVersion: v1
+         kind: Service
+         metadata:
+          name: nexus
+          namespace: nexus
+         spec:
+           type: NodePort
+           ports:
+           - port: 8081
+             targetPort: 8081
+           selector:
+             app: nexus      
+
   - name: Install Nexus Chart
     become: yes
     become_user: vagrant  
