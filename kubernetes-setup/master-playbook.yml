@@ -112,7 +112,7 @@
   
   - name: Retrieve helm binary archive.
     unarchive:
-       src: https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz
+       src: https://get.helm.sh/helm-v3.4.2-linux-amd64.tar.gz
        dest: /tmp
        creates: /usr/local/bin/helm
        remote_src: yes
@@ -215,7 +215,7 @@
           name: jenkins
           namespace: jenkins
          spec:
-           type: LoadBalancer
+           type: NodePort
            ports:
            - port: 8080
              targetPort: 8080
