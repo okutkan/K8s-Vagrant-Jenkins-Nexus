@@ -21,3 +21,12 @@
        namespace: jenkins
        chart_ref: jenkins/jenkins     
 
+
+  vars:
+     jenkins_hostname: 35.238.224.64    
+     docker_users:
+       - jenkins 
+
+  roles:    
+  - role: geerlingguy.jenkins
+  - role: geerlingguy.docker

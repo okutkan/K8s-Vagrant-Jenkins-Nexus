@@ -132,15 +132,57 @@
     pip:
       name: openshift
       state: present
+  - name: Ensure the jenkins Namespace exists.
+    become: yes
+    become_user: vagrant
+    kubernetes.core.k8s:
+      api_version: v1
+      kind: Namespace
+      name: jenkins
+      state: present  
 
-  vars:
-     jenkins_hostname: 35.238.224.64    
-     docker_users:
-       - jenkins 
+  - name: Ensure the Jenkins Service exists in the jenkins Namespace.
+    kubernetes.core.k8s:
+       state: present
+       definition:
+         apiVersion: v1
+         kind: Service
+         metadata:
+          name: jenkins
+          namespace: jenkins
+         spec:
+           type: LoadBalancer
+           ports:
+           - port: 8080
+             targetPort: 8080
+           selector:
+             app: jenkins
 
-  roles:    
-  - role: geerlingguy.jenkins
-  - role: geerlingguy.docker
+  - name: Ensure the nexus Namespace exists.
+    become: yes
+    become_user: vagrant
+    kubernetes.core.k8s:
+      api_version: v1
+      kind: Namespace
+      name: nexus
+      state: present             
+  - name: Ensure the nexus Service exists in the nexus Namespace.
+    kubernetes.core.k8s:
+       state: present
+       definition:
+         apiVersion: v1
+         kind: Service
+         metadata:
+          name: nexus
+          namespace: nexus
+         spec:
+           type: LoadBalancer
+           ports:
+           - port: 8081
+             targetPort: 8081
+           selector:
+             app: nexus
+           
   handlers:
    - name: docker status
      service: name=docker state=started
