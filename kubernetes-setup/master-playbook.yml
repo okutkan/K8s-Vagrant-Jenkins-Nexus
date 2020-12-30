@@ -194,15 +194,18 @@
       kind: Namespace
       name: jenkins
       state: present
-  - name: Install jenkins Chart
-    become: yes
-    become_user: vagrant
-    kubernetes.core.helm:
-       name: jenkins-server
-       namespace: jenkins
-       chart_ref: jenkins/jenkins    
-       values_files:
-        - ./jenkins-values.yaml
+  # - name: Install jenkins Chart
+  #   become: yes
+  #   become_user: vagrant
+  #   kubernetes.core.helm:
+  #      name: jenkins-server
+  #      namespace: jenkins
+  #      chart_ref: jenkins/jenkins    
+  #      values_files:
+  #       - ./jenkins-values.yaml
+  - name: Install jenkins
+    become: false
+    command: helm install jenkins -n jenkins -f jenkins-values.yaml jenkins/jenkins        
   - name: Ensure the Jenkins Service exists in the jenkins Namespace.
     become: yes
     become_user: vagrant  
