@@ -186,7 +186,13 @@
              targetPort: 8081
            selector:
              app: nexus
-           
+  - name: Install Nexus
+    script: nexus.sh
+    become: false  
+
+  - name: Install Jenkins
+    script: jenkins.sh
+    become: false           
   handlers:
    - name: docker status
      service: name=docker state=started
