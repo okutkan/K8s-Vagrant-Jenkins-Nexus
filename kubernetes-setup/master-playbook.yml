@@ -132,6 +132,53 @@
     pip:
       name: openshift
       state: present
+
+
+  - name: Add helm repo for sonatype nexus
+    become: yes
+    become_user: vagrant 
+    kubernetes.core.helm_repository:
+        name: sonatype
+        repo_url: "https://sonatype.github.io/helm3-charts/"
+        
+  - name: Ensure the nexus Namespace exists.
+    become: yes
+    become_user: vagrant
+    kubernetes.core.k8s:
+      api_version: v1
+      kind: Namespace
+      name: nexus
+      state: present
+
+  - name: Ensure the nexus Service exists in the nexus Namespace.
+    become: yes
+    become_user: vagrant  
+    kubernetes.core.k8s:
+       state: present
+       definition:
+         apiVersion: v1
+         kind: Service
+         metadata:
+          name: nexus
+          namespace: nexus
+         spec:
+           type: NodePort
+           ports:
+           - port: 8081
+             targetPort: 8081
+           selector:
+             app: nexus      
+
+  - name: Install Nexus Chart
+    become: yes
+    become_user: vagrant  
+    kubernetes.core.helm:
+       name: nexus-server
+       namespace: nexus
+       chart_ref: sonatype/sonatype-nexus
+
+
+
   - name: Add helm repo for jenkins
     become: yes
     become_user: vagrant
@@ -155,7 +202,7 @@
        namespace: jenkins
        chart_ref: jenkins/jenkins    
        values_files:
-        -jenkins-values.yaml 
+        -/files/jenkins-values.yaml
   - name: Ensure the Jenkins Service exists in the jenkins Namespace.
     become: yes
     become_user: vagrant  
