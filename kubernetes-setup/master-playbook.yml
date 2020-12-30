@@ -163,7 +163,7 @@
           name: nexus
           namespace: nexus
          spec:
-           type: nodeport
+           type: NodePort
            ports:
            - port: 8081
              targetPort: 8081
