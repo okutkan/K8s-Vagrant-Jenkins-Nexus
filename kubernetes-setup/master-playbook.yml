@@ -141,24 +141,7 @@
       name: jenkins
       state: present  
 
-  - name: Ensure the Jenkins Service exists in the jenkins Namespace.
-    become: yes
-    become_user: vagrant  
-    kubernetes.core.k8s:
-       state: present
-       definition:
-         apiVersion: v1
-         kind: Service
-         metadata:
-          name: jenkins
-          namespace: jenkins
-         spec:
-           type: LoadBalancer
-           ports:
-           - port: 8080
-             targetPort: 8080
-           selector:
-             app: jenkins
+
 
   - name: Ensure the nexus Namespace exists.
     become: yes

@@ -20,7 +20,24 @@
        name: jenkins-server
        namespace: jenkins
        chart_ref: jenkins/jenkins     
-
+  - name: Ensure the Jenkins Service exists in the jenkins Namespace.
+    become: yes
+    become_user: vagrant  
+    kubernetes.core.k8s:
+       state: present
+       definition:
+         apiVersion: v1
+         kind: Service
+         metadata:
+          name: jenkins
+          namespace: jenkins
+         spec:
+           type: LoadBalancer
+           ports:
+           - port: 8080
+             targetPort: 8080
+           selector:
+             app: jenkins
 
   vars:
      jenkins_hostname: 35.238.224.64    
