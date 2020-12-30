@@ -138,8 +138,8 @@
     become: yes
     become_user: vagrant 
     kubernetes.core.helm_repository:
-        name: sonatype
-        repo_url: "https://sonatype.github.io/helm3-charts/"
+        name: stevehipwell
+        repo_url: "https://stevehipwell.github.io/helm-charts/"
         
   - name: Ensure the nexus Namespace exists.
     become: yes
@@ -175,7 +175,7 @@
     kubernetes.core.helm:
        name: nexus-server
        namespace: nexus
-       chart_ref: sonatype/sonatype-nexus
+       chart_ref: stevehipwell/nexus3
 
 
 
