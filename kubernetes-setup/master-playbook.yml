@@ -203,8 +203,12 @@
   #      chart_ref: jenkins/jenkins    
   #      values_files:
   #       - ./jenkins-values.yaml
-  - name: Install jenkins
+  - name: pwd
     become: false
+    command: pwd    
+  - name: Install jenkins
+    become: yes
+    become_user: vagrant  
     command: helm install jenkins -n jenkins -f ./jenkins-values.yaml jenkins/jenkins        
   - name: Ensure the Jenkins Service exists in the jenkins Namespace.
     become: yes
