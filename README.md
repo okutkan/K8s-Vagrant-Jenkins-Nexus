@@ -24,3 +24,4 @@ This one adds Nexus and jenkins deployment to kubernetes using helm charts.
 - <https://galaxy.ansible.com/kubernetes/core>
 - <https://artifacthub.io/packages/helm/sonatype/nexus-repository-manager>
 - <https://artifacthub.io/packages/helm/jenkinsci/jenkins>
+- <https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3>
