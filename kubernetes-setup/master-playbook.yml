@@ -97,8 +97,13 @@
     with_items:
      - mkdir -p /home/vagrant/.kube
      - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
-     - chown vagrant:vagrant /home/vagrant/.kube/config      
-  
+     - chown vagrant:vagrant /home/vagrant/.kube/config  
+
+  - name: Copy kubeconfig from master node to local for using later stages
+    fetch:
+        src: /home/vagrant/.kube/config
+        dest: ~/.kube/config
+        flat: yes 
   - name: Install flannel pod network
     become: false
     command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
@@ -109,131 +114,7 @@
 
   - name: Copy join command to local file
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
-  
-  - name: Retrieve helm binary archive.
-    unarchive:
-       src: https://get.helm.sh/helm-v3.4.2-linux-amd64.tar.gz
-       dest: /tmp
-       creates: /usr/local/bin/helm
-       remote_src: yes
-
-  - name: Move helm binary into place.
-    command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
-    args:
-     creates: /usr/local/bin/helm 
-
-  - name: Install pip3
-    apt:
-      name: "python3-pip"
-      state: present
-      update_cache: yes
-
-  - name: Ensure K8s module dependencies are installed.
-    pip:
-      name: openshift
-      state: present
-
-
-  - name: Add helm repo for sonatype nexus
-    become: yes
-    become_user: vagrant 
-    kubernetes.core.helm_repository:
-        name: stevehipwell
-        repo_url: "https://stevehipwell.github.io/helm-charts/"
-        
-  - name: Ensure the nexus Namespace exists.
-    become: yes
-    become_user: vagrant
-    kubernetes.core.k8s:
-      api_version: v1
-      kind: Namespace
-      name: nexus
-      state: present
-
-  - name: Ensure the nexus Service exists in the nexus Namespace.
-    become: yes
-    become_user: vagrant  
-    kubernetes.core.k8s:
-       state: present
-       definition:
-         apiVersion: v1
-         kind: Service
-         metadata:
-          name: nexus
-          namespace: nexus
-         spec:
-           type: NodePort
-           ports:
-           - port: 8081
-             targetPort: 8081
-           selector:
-             app: nexus      
-
-  - name: Install Nexus Chart
-    become: yes
-    become_user: vagrant  
-    kubernetes.core.helm:
-       name: nexus-server
-       namespace: nexus
-       chart_ref: stevehipwell/nexus3
-
-
-
-  - name: Add helm repo for jenkins
-    become: yes
-    become_user: vagrant
-    kubernetes.core.helm_repository:
-        name: jenkins
-        repo_url: "https://charts.jenkins.io"
-  
-  - name: Ensure the jenkins Namespace exists.
-    become: yes
-    become_user: vagrant
-    kubernetes.core.k8s:
-      api_version: v1
-      kind: Namespace
-      name: jenkins
-      state: present
-  # - name: Install jenkins Chart
-  #   become: yes
-  #   become_user: vagrant
-  #   kubernetes.core.helm:
-  #      name: jenkins-server
-  #      namespace: jenkins
-  #      chart_ref: jenkins/jenkins    
-  #      values_files:
-  #       - ./jenkins-values.yaml
-  - name: pwd
-    become: false
-    command: pwd    
-  - name: Install jenkins
-    become: yes
-    become_user: vagrant  
-    command: helm install jenkins -n jenkins -f ./jenkins-values.yaml jenkins/jenkins        
-  - name: Ensure the Jenkins Service exists in the jenkins Namespace.
-    become: yes
-    become_user: vagrant  
-    kubernetes.core.k8s:
-       state: present
-       definition:
-         apiVersion: v1
-         kind: Service
-         metadata:
-          name: jenkins
-          namespace: jenkins
-         spec:
-           type: NodePort
-           ports:
-           - port: 8080
-             targetPort: 8080
-           selector:
-             app: jenkins
-
-
 
   handlers:
    - name: docker status
      service: name=docker state=started
-
-
-

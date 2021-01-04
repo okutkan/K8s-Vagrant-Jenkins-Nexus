@@ -1,15 +1,15 @@
 # jenkins
 
-# Create a persistent volume
-kubectl apply -f jenkins-volume.yaml
+# # Create a persistent volume
+# kubectl apply -f jenkins-volume.yaml
 
-#Create a service account
-kubectl apply -f jenkins-sa.yaml
+# #Create a service account
+# kubectl apply -f jenkins-sa.yaml
 
-helm repo add jenkins https://charts.jenkins.io
-helm repo update
-#helm install jenkins jenkins/jenkins  -n jenkins
-helm install jenkins -n jenkins -f jenkins-values.yaml jenkins/jenkins 
+# helm repo add jenkins https://charts.jenkins.io
+# helm repo update
+# #helm install jenkins jenkins/jenkins  -n jenkins
+# helm install jenkins -n jenkins -f jenkins-values.yaml jenkins/jenkins 
 
 #Get your 'admin' user password
 jsonpath="{.data.jenkins-admin-password}"

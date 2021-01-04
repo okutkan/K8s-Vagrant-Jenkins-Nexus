@@ -25,7 +25,7 @@
       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
       state: present
 
-  - name: Install docker and its dependecies
+  - name: Install docker and its dependecieskube
     apt: 
       name: "{{ packages }}"
       state: present
@@ -90,93 +90,11 @@
       daemon_reload: yes
       state: restarted
 
-
-
   - name: Copy the join command to server location
     copy: src=join-command dest=/tmp/join-command.sh mode=0777
 
   - name: Join the node to cluster
     command: sh /tmp/join-command.sh
-
-#  #setup kubectl for vagrant user
-
-#   - name: Create .kube directory for vagrant user
-#     file:
-#       path: /home/vagrant/.kube
-#       state: directory
-#   - name: Upload kubeconfig to the node
-#     copy:
-#       src: ~/.kube/config
-#       dest: /home/vagrant/.kube/config  
-  
-#   # - name: Install flannel pod network
-#   #   become: false
-#   #   command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml   
-#   #helm install
-#   - name: Retrieve helm binary archive.
-#     unarchive:
-#        src: https://get.helm.sh/helm-v3.4.2-linux-amd64.tar.gz
-#        dest: /tmp
-#        creates: /usr/local/bin/helm
-#        remote_src: yes
-
-#   - name: Move helm binary into place.
-#     command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
-#     args:
-#      creates: /usr/local/bin/helm 
-
-#   - name: Install pip3
-#     apt:
-#       name: "python3-pip"
-#       state: present
-#       update_cache: yes
-
-#   - name: Ensure K8s module dependencies are installed.
-#     pip:
-#       name: openshift
-#       state: present
-#   #jenkins
-#   - name: Add helm repo for jenkins
-#     become: yes
-#     become_user: vagrant  
-#     command: "{{ item }}"
-#     with_items:
-#       - helm repo add jenkinsci https://charts.jenkins.io
-#       - helm repo update
-  
-#   - name: Copy file with owner and permissions
-#     copy:
-#      src: "{{ item }}"
-#      dest: ./
-#     with_items:
-#      - jenkins-volume.yaml
-#      - jenkins-sa.yaml
-#      - jenkins-values.yaml 
-#      - jenkins.sh
-
-#   - name: Setup required persistent volume and service account
-#     become: yes
-#     become_user: vagrant  
-#     command: "{{ item }}"
-#     with_items:
-#       - kubectl apply -f jenkins-volume.yaml
-#       - kubectl apply -f jenkins-sa.yaml
-   
-#   - name: Ensure the jenkins Namespace exists.
-#     become: yes
-#     become_user: vagrant
-#     kubernetes.core.k8s:
-#       api_version: v1
-#       kind: Namespace
-#       name: jenkins
-#       state: present
-
-#   - name: Install jenkins
-#     become: yes
-#     become_user: vagrant  
-#     command: "{{ item }}"
-#     with_items:
-#       - helm install jenkins -n jenkins -f jenkins-values.yaml jenkinsci/jenkins  
     
   handlers:
    - name: docker status

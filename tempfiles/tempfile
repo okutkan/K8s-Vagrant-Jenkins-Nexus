@@ -1,0 +1,109 @@
+ignore_errors: yes- name: Move helm binary into place.
+    command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
+    args:
+     creates: /usr/local/bin/helm 
+
+  - name: Install pip3
+    apt:
+      name: "python3-pip"
+      state: present
+      update_cache: yes
+
+
+  # - name: Add helm repo for sonatype nexus
+  #   become: yes
+  #   become_user: vagrant 
+  #   kubernetes.core.helm_repository:
+  #       #name: stevehipwell
+  #       #repo_url: "https://stevehipwell.github.io/helm-charts/"
+  #       name: sonatype 
+  #       repo_url: https://sonatype.github.io/helm3-charts/
+        
+  # - name: Ensure the nexus Namespace exists.
+  #   become: yes
+  #   become_user: vagrant
+  #   kubernetes.core.k8s:
+  #     api_version: v1
+  #     kind: Namespace
+  #     name: nexus
+  #     state: present
+
+  # - name: Install jenkins
+  #   become: yes
+  #   become_user: vagrant  
+  #   command: "{{ item }}"
+  #   with_items:
+  #     - helm repo add sonatype https://sonatype.github.io/helm3-charts/
+  #     - helm repo update
+  #     - helm install nexus -n nexus sonatype/nexus-repository-manager   
+
+  # - name: Ensure the nexus Service exists in the nexus Namespace.
+  #   become: yes
+  #   become_user: vagrant  
+  #   kubernetes.core.k8s:
+  #      state: present
+  #      definition:
+  #        apiVersion: v1
+  #        kind: Service
+  #        metadata:
+  #         name: nexus
+  #         namespace: nexus
+  #        spec:
+  #          type: NodePort
+  #          ports:
+  #          - port: 8081
+  #            targetPort: 8081
+  #          selector:
+  #            app: nexus      
+
+  # - name: Install Nexus Chart
+  #   become: yes
+  #   become_user: vagrant  
+  #   kubernetes.core.helm:
+  #      name: nexus-server
+  #      namespace: nexus
+  #      #chart_ref: stevehipwell/nexus3
+  #      chart_ref: sonatype/nexus-repository-manager
+# 
+# http://iq-server.demo/
+# http://iq-server.demo/
+# https://github.com/sonatype/helm3-charts/raw/master/charts/nexus-repository-manager-29.0.0.tgz
+  # - name: Add helm repo for jenkins
+  #   become: yes
+  #   become_user: vagrant
+  #   kubernetes.core.helm_repository:
+  #       name: jenkins
+  #       repo_url: "https://charts.jenkins.io"
+  
+
+  # - name: Install jenkins Chart
+  #   become: yes
+  #   become_user: vagrant
+  #   kubernetes.core.helm:
+  #      name: jenkins-server
+  #      namespace: jenkins
+  #      chart_ref: jenkins/jenkins    
+  #      values_files:
+  #       - ./jenkins-values.yaml
+  # - name: Install javaapp
+  #   become: yes
+  #   become_user: vagrant  
+  #   command: "{{ item }}"
+  #   with_items:
+  #     - docker build https://github.com/okutkan/PythonSampleApp.git#main -t okutkan/JavaMavenSampleApp
+  #     - helm repo add okutkan https://raw.githubusercontent.com/okutkan/Helm-Charts/master/
+  #     - helm repo update
+  #     - helm install javaapp okutkan/JavaMavenSampleApp  
+
+
+
+  - name: Install pythonApp
+    become: yes
+    become_user: vagrant  
+    command: "{{ item }}"
+    with_items:
+      - docker build https://github.com/okutkan/PythonSampleApp.git#main -t okutkan/pythonsampleapp
+      - helm repo add okutkan https://raw.githubusercontent.com/okutkan/Helm-Charts/master/
+      - helm repo update
+      - helm install mysql  okutkan/mysqlsample 
+      - helm install pythonapp  okutkan/samplepythonapp  --set imageName=okutkan/pythonsampleapp
