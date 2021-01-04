@@ -383,10 +383,31 @@ $ vagrant ssh node-2
 
 ## Deploying Jenkins and Nexus
 
-- to be detailed
-<https://www.jenkins.io/doc/book/installing/kubernetes>
+### Vagrantfile Modifications
 
-### Jenkins details
+To apply nexus and jenkins setup in the ansible process Vagrant file must be modified to accommodate new ansible playbook.
+After adding vagrant user to docker user group, user must logoff and login again. Since we are automating this step.
+We have to reload the node for changes to take effect. Vagrant Reload plugin is used to achieve this effect <https://github.com/aidanns/vagrant-reload>
+After reload vagrant runs app-playbook.yml
+
+````Ansible
+            node.vm.provision :reload
+            node.vm.provision "ansible" do |ansible|
+                ansible.playbook = "app-setup/app-playbook.yml"
+                ansible.extra_vars = {
+                    node_ip: "192.168.50.#{i + 10}",
+                }
+            end
+````
+
+### Ansible playbook to deploy jenkins, nexus and sample app
+
+This playbook first installs kube config to vagrant node.
+Then installs helm and pip which is required from the deployment steps.
+Installation steps can be found [here](app-setup/app-playbook.yml)
+
+### Jenkins coononnectin  details
+
 1. Get your 'admin' user password by running:
     kubectl exec --namespace default -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/chart-admin-password && echo
 2. Get the Jenkins URL to visit by running these commands in the same shell:
