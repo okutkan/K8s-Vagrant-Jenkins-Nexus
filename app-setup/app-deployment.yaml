@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: samplepythonapp
+  name: samplepythonapp
+  namespace: default
+spec:
+  #replicas: 1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: samplepythonapp
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: samplepythonapp
+    spec:
+      containers:
+      - name: samplepythonapp
+        image: okutkan/pythonsampleapp
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+        env:
+          - name: MYSQL_USERNAME
+            value: "appuser"
+          - name: MYSQL_PASSWORD
+            value: "apppassword"
+          - name: MYSQL_INSTANCE_NAME
+            value: "main"
+          - name: MYSQL_PORT_3306_TCP_ADDR
+            value: $(MYSQL_SERVICE_HOST)
+          - name: MYSQL_PORT_3306_TCP_PORT
+            value: "3306"
+        resources: {}
+status: {}

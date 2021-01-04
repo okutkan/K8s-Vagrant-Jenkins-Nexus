@@ -1,0 +1,101 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Create kube folder
+    command: mkdir -p /home/vagrant/.kube
+  - name: Copy kubeconfig from local to the node
+    copy:
+      src: ~/.kube/config
+      dest: /home/vagrant/.kube/config  
+  - name: Setup kubeconfig for vagrant user
+    command: chown vagrant:vagrant /home/vagrant/.kube/config
+
+  #install Helm
+  - name: Retrieve helm binary archive.
+    unarchive:
+       src: https://get.helm.sh/helm-v3.4.2-linux-amd64.tar.gz
+       dest: /tmp
+       creates: /usr/local/bin/helm
+       remote_src: yes
+
+  - name: Move helm binary into place.
+    command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
+    args:
+     creates: /usr/local/bin/helm 
+
+  - name: Install pip3
+    apt:
+      name: "python3-pip"
+      state: present
+      update_cache: yes
+
+
+
+  - name: Copy required files with owner and permissions
+    copy:
+     src: "{{ item }}"
+     dest: ./
+    with_items:
+     - nexus-pv.yaml
+     - nexus-pvc.yaml
+     - jenkins-sa.yaml
+     - jenkins-volume.yaml
+     - jenkins-values.yaml.
+
+  - name: Install mysql with persistent volume
+    become: yes
+    become_user: vagrant  
+    command: "{{ item }}"
+    with_items:
+      - kubectl create -f  nexus-pv.yaml
+      - kubectl create -f  nexus-pvc.yaml   
+      - kubectl apply -f jenkins-volume.yaml
+      - kubectl apply -f jenkins-sa.yaml   
+     
+  - name: Install jenkins 
+    become: yes
+    become_user: vagrant  
+    command: "{{ item }}"
+    with_items:
+      - helm repo add stable https://charts.jenkins.io
+      - helm repo update
+      - helm install jenkins -n jenkins -f jenkins-values.yaml jenkinsci/jenkins
+  - name: Install nexus 
+    become: yes
+    become_user: vagrant  
+    command: "{{ item }}"
+    with_items:
+      - helm repo add stevehipwell https://stevehipwell.github.io/helm-charts/
+      - helm repo update
+      #helm upgrade --install --namespace default --values ./my-values.yaml my-release stevehipwell/nexus3
+      - helm install sonatype stevehipwell/nexus3 -n nexus
+
+   #for debug use:
+   #kubectl get pv
+   #kubectl get pvc
+ 
+  # - name: Docker Build pythonsampleapp
+  #   become: yes
+  #   become_user: vagrant 
+  #   ignore_errors: yes 
+  #   command: "{{ item }}"
+  #   with_items:
+  #     - git clone https://github.com/okutkan/PythonSampleApp.git 
+  #     - docker build /home/vagrant/PythonSampleApp/ -t okutkan/pythonsampleapp
+
+  # - name: Install pythonApp with helm
+  #   become: yes
+  #   become_user: vagrant  
+  #   command: "{{ item }}"
+  #   with_items:
+  #     - helm repo add okutkan https://raw.githubusercontent.com/okutkan/Helm-Charts/master/
+  #     - helm repo update
+  #     - helm upgrade --install pythonapp  okutkan/samplepythonapp
+  
+
+
+  handlers:
+   - name: docker status
+     service: name=docker state=started     
+      
