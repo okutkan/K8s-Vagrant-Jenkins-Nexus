@@ -10,6 +10,20 @@ For detailed commit history please check these repositories.
 - [Helm Charts](https://github.com/okutkan/Helm-Charts)
 - [Sample java App](https://github.com/okutkan/JavaMavenSampleApp)
 
+Work in progress
+[X] Kubernetes cluster setup
+[ ] Jenkins install
+[ ] Nexus install
+[X] java sample app repository
+[X] Helm chart for java application
+[X] Jenkinsfile
+[X] Dockerfile
+[ ] Jenkins trigger
+[X] Build
+[X] Test
+[X] Push artifacts to nexus
+[ ] Test full steps
+
 ## Requirements
 
 - For Linux:
