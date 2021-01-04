@@ -446,10 +446,11 @@ git commit -m 'New chart version'
 ## Jenkins Pipeline
 
 ```Jenkinsfile
+
 pipeline {
     agent {
         docker {
-            image 'maven:3-alpine'
+            image 'maven: 3-alpine'
             args '-v /root/.m2:/root/.m2'
         }
     }
@@ -459,7 +460,11 @@ pipeline {
         NEXUS_URL = "192.168.50.11:8081"
         NEXUS_REPOSITORY = "maven-nexus-repo"
         NEXUS_CREDENTIAL_ID = "nexus-user-credentials"
+        imageid = "maven-nexus-repo/sampleapp"
+        registryCredential = 'nexus-user-credentials'
+        CLUSTER_URL = "HTTPS://192.168.50.1:8443"
     }
+}
     stages {
         stage('Build') {
             steps {
@@ -473,7 +478,28 @@ pipeline {
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
+                    }
                 }
+        }
+        stage('Building image') {
+            steps{
+                script {
+                    docker.build imageid + ":$BUILD_NUMBER"
+                }
+            }
+        }   
+        stage('Deploy Image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $imageid:$BUILD_NUMBER"
             }
         }
         stage("Publish to Nexus Repository Manager") {
@@ -515,11 +541,27 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh'
             }
         }
+                stage("Deploy"){
+        withKubeConfig([credentialsId: 'kubernetes-sa',
+                serverUrl: CLUSTER_URL
+                ]) {
+            sh """
+                helm init --client-only
+                helm upgrade \
+                  sampleApp \
+                  --namespace default \
+                  --install \
+                  --wait \
+                  --set image=$imageid \
+                  ./helm
+            """
+        }
     }
 }
 
 
 
+       
        
 ```
 
@@ -534,3 +576,5 @@ pipeline {
 - <https://artifacthub.io/packages/helm/sonatype/nexus-repository-manager>
 - <https://artifacthub.io/packages/helm/jenkinsci/jenkins>
 - <https://www.jenkins.io/doc/book/installing/kubernetes/#install-jenkins-with-helm-v3>
+- <https://blog.sonatype.com/workflow-automation-publishing-artifacts-to-nexus-using-jenkins-pipelines>
+- <https://medium.com/appfleet/publishing-artifacts-to-sonatype-nexus-using-jenkins-pipelines-db8c1412dc7>
