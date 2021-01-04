@@ -11,18 +11,18 @@ For detailed commit history please check these repositories.
 - [Sample java App](https://github.com/okutkan/JavaMavenSampleApp)
 
 Work in progress
-[X] Kubernetes cluster setup
-[ ] Jenkins install
-[ ] Nexus install
-[X] java sample app repository
-[X] Helm chart for java application
-[X] Jenkinsfile
-[X] Dockerfile
-[ ] Jenkins trigger
-[X] Build
-[X] Test
-[X] Push artifacts to nexus
-[ ] Test full steps
+-  [X] Kubernetes cluster setup
+- [ ] Jenkins install
+- [ ] Nexus install
+- [X] java sample app repository
+- [X] Helm chart for java application
+- [X] Jenkinsfile
+- [X] Dockerfile
+- [ ] Jenkins trigger
+- [X] Build
+- [X] Test
+- [X] Push artifacts to nexus
+- [ ] Test full steps
 
 ## Requirements
 
@@ -387,10 +387,10 @@ $ vagrant ssh node-2
 
 ### Jenkins details
 1. Get your 'admin' user password by running:
-  kubectl exec --namespace default -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/chart-admin-password && echo
+    kubectl exec --namespace default -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/chart-admin-password && echo
 2. Get the Jenkins URL to visit by running these commands in the same shell:
-  echo http://127.0.0.1:8080
-  kubectl --namespace default port-forward svc/jenkins 8080:8080
+    echo http://127.0.0.1:8080
+    kubectl --namespace default port-forward svc/jenkins 8080:8080
 
 3. Login with the password from step 1 and the username: admin
 4. Configure security realm and authorization strategy
