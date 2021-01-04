@@ -11,7 +11,8 @@ For detailed commit history please check these repositories.
 - [Sample java App](https://github.com/okutkan/JavaMavenSampleApp)
 
 Work in progress
--  [X] Kubernetes cluster setup
+
+- [X] Kubernetes cluster setup
 - [ ] Jenkins install
 - [ ] Nexus install
 - [X] java sample app repository
