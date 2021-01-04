@@ -32,6 +32,17 @@ Vagrant.configure("2") do |config|
                     node_ip: "192.168.50.#{i + 10}",
                 }
             end
+            node.vm.provision :reload
+            node.vm.provision "ansible" do |ansible|
+                ansible.playbook = "app-setup/app-playbook.yml"
+                ansible.extra_vars = {
+                    node_ip: "192.168.50.#{i + 10}",
+                }
+            end
         end
     end
+config.push.define "local-exec" do |push|
+    push.script = "app-setup/push.sh"
+end
+
 end
