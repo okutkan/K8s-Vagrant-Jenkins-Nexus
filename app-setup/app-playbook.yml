@@ -41,29 +41,32 @@
      - nexus-pvc.yaml
      - jenkins-sa.yaml
      - jenkins-volume.yaml
-     - jenkins-values.yaml.
+     - jenkins-values.yaml
 
   - name: Install mysql with persistent volume
     become: yes
     become_user: vagrant  
     command: "{{ item }}"
     with_items:
-      - kubectl create -f  nexus-pv.yaml
-      - kubectl create -f  nexus-pvc.yaml   
+      # - kubectl create -f  nexus-pv.yaml
+      # - kubectl create -f  nexus-pvc.yaml   
       - kubectl apply -f jenkins-volume.yaml
       - kubectl apply -f jenkins-sa.yaml   
      
   - name: Install jenkins 
     become: yes
-    become_user: vagrant  
+    become_user: vagrant 
+    ignore_errors: yes  
     command: "{{ item }}"
     with_items:
       - helm repo add stable https://charts.jenkins.io
       - helm repo update
-      - helm install jenkins -n jenkins -f jenkins-values.yaml jenkinsci/jenkins
+      - kubectl create namespace jenkins
+      - helm install jenkins -n jenkins  -f jenkins-values.yaml stable/jenkins
   - name: Install nexus 
     become: yes
     become_user: vagrant  
+    ignore_errors: yes 
     command: "{{ item }}"
     with_items:
       - helm repo add stevehipwell https://stevehipwell.github.io/helm-charts/
