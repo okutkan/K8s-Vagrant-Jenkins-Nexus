@@ -50,18 +50,17 @@ Work in progress
 - After initial setup script finishes your computer will be ready to run `up.sh`
 - `up.sh` script provisions k8s master and nodes using VirtualBox. This may take 5-15 minutes depending on your machine configuration.
 
-
 ## Table of Contents
 
 1. [Sample java App](#sample-java-app)
 2. [Dockerizing Sample java App](#dockerizing-sample-java-app)
 3. [Kubernetes cluster setup using Ansible and Vagrant](#kubernetes-setup-using-ansible-and-vagrant)
 4. [Deploying Jenkins and Nexus](#deploying-jenkins-and-nexus)
-4. [Helm Charts](#helm-charts)
-5. [Deploying Sample App](#deploying-sample-app)
-6. [Jenkins pipeline](#jenkins-pipeline)
-7. [FAQ](#faq)
-8. [Recommended Reading](#recommended-reading)
+5. [Helm Charts](#helm-charts)
+6. [Deploying Sample App](#deploying-sample-app)
+7. [Jenkins pipeline](#jenkins-pipeline)
+8. [FAQ](#faq)
+9. [Recommended Reading](#recommended-reading)
 
 ## Sample java App
 
@@ -93,9 +92,29 @@ public class App
 
 ## Dockerizing Sample java App
 
-- to be detailed
+Multistage approach is used to build docker image.
+
+```Dockerfile
+#
+# Build stage
+#
+FROM maven:3.5-jdk-8 AS build  
+COPY src /home/app/src
+COPY pom.xml /home/app
+RUN mvn -f /home/app/pom.xml clean package
+
+#
+# Package stage
+#
+#FROM openjdk:11-jre-slim
+FROM gcr.io/distroless/java  
+COPY --from=build /home/app/target/my-app-1.0-SNAPSHOT.jar /usr/local/lib/my-app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/usr/local/lib/my-app.jar"]
+```
 
 ## Kubernetes cluster setup using Ansible and Vagrant
+
 Vagrant is a tool that will allow us to create a virtual environment easily.  It can be used with multiple providers such as Oracle VirtualBox, VMware, Docker.
 In this setup VirtualBox used as provider. Kubernetes cluster that will consist of one master and n worker nodes is provisioned by using Ansible playbooks.
 This setup provides a production-like cluster that can be setup on your local machine without needing manual configuration.
